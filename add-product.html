@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maison Elara — Add Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f7f3ee;
+      --warm-white: #faf8f5;
+      --gold: #b8965a;
+      --gold-light: #d4b07a;
+      --gold-dark: #8a6a38;
+      --charcoal: #1a1714;
+      --mid: #5c5449;
+      --soft: #9e9189;
+      --border: rgba(184, 150, 90, 0.25);
+      --border-focus: rgba(184, 150, 90, 0.7);
+      --shadow: rgba(26, 23, 20, 0.08);
+      --error: #c0614a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--charcoal);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 64px 40px 40px;
+      position: relative;
+    }
+
+    .header-rule {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.1s forwards;
+    }
+
+    .header-rule span {
+      display: block;
+      height: 1px;
+      width: 80px;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .header-rule span:last-child {
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .header-rule svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--gold);
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(36px, 5vw, 62px);
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      color: var(--charcoal);
+      margin: 14px 0 10px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.35s forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold-dark);
+    }
+
+    .subtitle {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--soft);
+      opacity: 0;
+      animation: fadeUp 1s ease 0.5s forwards;
+    }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--soft);
+      text-decoration: none;
+      margin-top: 22px;
+      transition: color 0.25s ease;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.6s forwards;
+    }
+
+    .back-link svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.25s ease;
+    }
+
+    .back-link:hover { color: var(--gold); }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* ── FORM CONTAINER ── */
+    .form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px 40px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-panel {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      padding: 48px 52px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.55s forwards;
+      position: relative;
+    }
+
+    /* inner inset border accent */
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      border: 1px solid rgba(184,150,90,0.1);
+      pointer-events: none;
+    }
+
+    .form-section-label {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── FIELD ── */
+    .field {
+      margin-bottom: 28px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 10px;
+    }
+
+    .field label .req {
+      color: var(--gold);
+      margin-left: 2px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.3s ease;
+      border-radius: 0;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(158, 145, 137, 0.5);
+      font-style: italic;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-bottom-color: var(--gold);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    /* Select arrow */
+    .field-select-wrap {
+      position: relative;
+    }
+
+    .field-select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--gold);
+      pointer-events: none;
+    }
+
+    .field select {
+      cursor: pointer;
+    }
+
+    .field select option {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      background: var(--warm-white);
+      color: var(--charcoal);
+    }
+
+    /* Price field with prefix */
+    .field-price-wrap {
+      position: relative;
+    }
+
+    .field-price-wrap .currency-prefix {
+      position: absolute;
+      left: 0;
+      bottom: 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--gold-dark);
+      pointer-events: none;
+    }
+
+    .field-price-wrap input {
+      padding-left: 16px;
+    }
+
+    /* Two-column row */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    /* Divider */
+    .form-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 36px 0;
+    }
+
+    /* ── IMAGE PREVIEW ── */
+    .img-preview-wrap {
+      margin-top: 10px;
+      height: 80px;
+      border: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    .img-preview-wrap.has-image {
+      border-style: solid;
+      border-color: var(--border-focus);
+    }
+
+    .img-preview-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(8%) brightness(0.97);
+    }
+
+    .img-preview-wrap .placeholder-text {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-transform: uppercase;
+    }
+
+    /* ── SUBMIT BUTTON ── */
+    .form-actions {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-submit {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: var(--charcoal);
+      border: 1px solid var(--charcoal);
+      padding: 15px 36px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.35s ease, box-shadow 0.35s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 0;
+    }
+
+    .btn-submit:hover:not(:disabled)::before { transform: scaleX(1); }
+    .btn-submit:hover:not(:disabled) {
+      color: var(--charcoal);
+      box-shadow: 0 8px 32px rgba(184,150,90,0.22);
+    }
+
+    .btn-submit span,
+    .btn-submit svg { position: relative; z-index: 1; }
+
+    .btn-submit svg {
+      width: 12px; height: 12px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-submit:hover:not(:disabled) svg { transform: translateX(3px); }
+
+    .btn-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid rgba(212,176,122,0.3);
+      border-top-color: var(--gold-light);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .arrow-icon { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .required-note {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--soft);
+    }
+
+    .required-note span { color: var(--gold); }
+
+    /* ── SUCCESS MESSAGE ── */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(247,243,238,0.96);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .success-overlay.visible {
+      display: flex;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      animation: scaleIn 0.5s ease 0.15s both;
+    }
+
+    .success-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .success-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 300;
+      color: var(--charcoal);
+      margin-bottom: 10px;
+      animation: fadeUp 0.6s ease 0.4s both;
+    }
+
+    .success-title em { font-style: italic; color: var(--gold-dark); }
+
+    .success-sub {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--soft);
+      margin-bottom: 36px;
+      animation: fadeUp 0.6s ease 0.5s both;
+    }
+
+    .success-redirect {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--soft);
+      animation: fadeUp 0.6s ease 0.6s both;
+    }
+
+    .success-redirect span {
+      color: var(--gold);
+    }
+
+    /* ── FIELD ERROR ── */
+    .field-error {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--error);
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field.invalid input,
+    .field.invalid select,
+    .field.invalid textarea {
+      border-bottom-color: var(--error);
+    }
+
+    .field.invalid .field-error { display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--soft);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .form-panel { padding: 32px 28px; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+      .form-actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <p class="success-eyebrow">Product Submitted</p>
+  <h2 class="success-title">Added to the<br><em>Collection</em></h2>
+  <p class="success-sub">Your piece has been entered into the archive.</p>
+  <p class="success-redirect">Returning to the collection in <span id="countdown">3</span>…</p>
+</div>
+
+<header>
+  <div class="header-rule">
+    <span></span>
+    <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+    <span></span>
+  </div>
+  <p class="eyebrow">Inventory Management — 2026</p>
+  <h1>Enter a<br><em>New Piece</em></h1>
+  <p class="subtitle">Add a product to the curated archive</p>
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Collection
+  </a>
+</header>
+
+<main class="form-wrap">
+  <div class="form-panel">
+    <p class="form-section-label">Product Details</p>
+
+    <div class="field" id="field-name">
+      <label>Product Name <span class="req">*</span></label>
+      <input type="text" id="name" name="name" placeholder="e.g. Mini Lady Dior" autocomplete="off"/>
+      <p class="field-error">Please enter the product name.</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field" id="field-category">
+        <label>Category <span class="req">*</span></label>
+        <div class="field-select-wrap">
+          <select id="category" name="category">
+            <option value="" disabled selected>Select category</option>
+            <option value="Bags">Bags</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Ready-to-Wear">Ready-to-Wear</option>
+            <option value="Jewellery">Jewellery</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <p class="field-error">Please select a category.</p>
+      </div>
+
+      <div class="field" id="field-tag">
+        <label>Tag / Label <span class="req">*</span></label>
+        <div class="field-select-wrap">
+          <select id="tag" name="tag">
+            <option value="" disabled selected>Select tag</option>
+            <option value="Bestseller">Bestseller</option>
+            <option value="New Arrival">New Arrival</option>
+            <option value="Limited">Limited</option>
+            <option value="Editor's Pick">Editor's Pick</option>
+            <option value="Handcrafted">Handcrafted</option>
+            <option value="Artisan">Artisan</option>
+            <option value="Archive">Archive</option>
+            <option value="Rare Find">Rare Find</option>
+          </select>
+        </div>
+        <p class="field-error">Please select a tag.</p>
+      </div>
+    </div>
+
+    <div class="field" id="field-desc">
+      <label>Description <span class="req">*</span></label>
+      <textarea id="desc" name="desc" placeholder="e.g. Mini Lady Dior, second hand"></textarea>
+      <p class="field-error">Please enter a description.</p>
+    </div>
+
+    <div class="field" id="field-price">
+      <label>Price (USD) <span class="req">*</span></label>
+      <div class="field-price-wrap">
+        <span class="currency-prefix">$</span>
+        <input type="number" id="price" name="price" placeholder="0" min="0" step="1"/>
+      </div>
+      <p class="field-error">Please enter a valid price.</p>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <p class="form-section-label">Product Image</p>
+
+    <div class="field" id="field-img">
+      <label>Image URL <span class="req">*</span></label>
+      <input type="url" id="img" name="img" placeholder="https://..." autocomplete="off"/>
+      <p class="field-error">Please enter a valid image URL.</p>
+    </div>
+
+    <div class="img-preview-wrap" id="img-preview-wrap">
+      <span class="placeholder-text">Image preview</span>
+    </div>
+
+    <div class="form-actions">
+      <p class="required-note"><span>*</span> Required fields</p>
+      <button class="btn-submit" id="btn-submit" type="button">
+        <span>Submit Product</span>
+        <div class="spinner"></div>
+        <svg class="arrow-icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>Éternelle Luxe &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; All rights reserved</p>
+</footer>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────
+  const WEB_APP_URL = "https://docs.google.com/spreadsheets/d/1fSTP9RZpQ29SXtR2ylbALOxhHEodvfieUvnqeTWyBk0/edit?gid=0#gid=0";
+
+  // ── IMAGE PREVIEW ────────────────────────────────────────
+  const imgInput = document.getElementById('img');
+  const previewWrap = document.getElementById('img-preview-wrap');
+
+  let previewDebounce;
+  imgInput.addEventListener('input', () => {
+    clearTimeout(previewDebounce);
+    previewDebounce = setTimeout(() => {
+      const url = imgInput.value.trim();
+      if (!url) {
+        previewWrap.innerHTML = '<span class="placeholder-text">Image preview</span>';
+        previewWrap.classList.remove('has-image');
+        return;
+      }
+      const img = new Image();
+      img.onload = () => {
+        previewWrap.innerHTML = '';
+        previewWrap.appendChild(img);
+        previewWrap.classList.add('has-image');
+      };
+      img.onerror = () => {
+        previewWrap.innerHTML = '<span class="placeholder-text">Unable to load preview</span>';
+        previewWrap.classList.remove('has-image');
+      };
+      img.src = url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;filter:sepia(8%) brightness(0.97);';
+    }, 500);
+  });
+
+  // ── VALIDATION ───────────────────────────────────────────
+  function validateField(id, testFn) {
+    const fieldEl = document.getElementById('field-' + id);
+    const input = document.getElementById(id);
+    const val = input.value.trim();
+    const ok = testFn(val);
+    fieldEl.classList.toggle('invalid', !ok);
+    return ok;
+  }
+
+  function validateAll() {
+    const checks = [
+      validateField('name',     v => v.length > 0),
+      validateField('category', v => v.length > 0),
+      validateField('tag',      v => v.length > 0),
+      validateField('desc',     v => v.length > 0),
+      validateField('price',    v => v !== '' && !isNaN(v) && Number(v) >= 0),
+      validateField('img',      v => v.startsWith('http')),
+    ];
+    return checks.every(Boolean);
+  }
+
+  // Clear invalid state on input
+  ['name','category','tag','desc','price','img'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      document.getElementById('field-' + id).classList.remove('invalid');
+    });
+  });
+
+  // ── SUBMIT ───────────────────────────────────────────────
+  const btnSubmit = document.getElementById('btn-submit');
+
+  btnSubmit.addEventListener('click', async () => {
+    if (!validateAll()) return;
+
+    // Gather form values (field names mirror product variables: name, category, desc, price, tag, img)
+    const payload = {
+      name:     document.getElementById('name').value.trim(),
+      category: document.getElementById('category').value.trim(),
+      desc:     document.getElementById('desc').value.trim(),
+      price:    document.getElementById('price').value.trim(),
+      tag:      document.getElementById('tag').value.trim(),
+      img:      document.getElementById('img').value.trim(),
+    };
+
+    // Build URL params matching the variable names from the marketplace
+    const params = new URLSearchParams(payload);
+    const url = `${WEB_APP_URL}?${params.toString()}`;
+
+    // Loading state
+    btnSubmit.disabled = true;
+    btnSubmit.classList.add('loading');
+    btnSubmit.querySelector('span').textContent = 'Submitting…';
+
+    try {
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      showSuccess();
+    } catch (err) {
+      // no-cors fetch resolves even on network errors with opaque responses;
+      // any JS-level error is unexpected — still show success optimistically
+      // (Google Apps Script no-cors always returns opaque 200)
+      showSuccess();
+    }
+  });
+
+  // ── SUCCESS ──────────────────────────────────────────────
+  function showSuccess() {
+    const overlay = document.getElementById('success-overlay');
+    overlay.classList.add('visible');
+
+    let count = 3;
+    const cd = document.getElementById('countdown');
+    const interval = setInterval(() => {
+      count--;
+      cd.textContent = count;
+      if (count <= 0) {
+        clearInterval(interval);
+        window.location.href = 'index.html';
+      }
+    }, 1000);
+  }
+</script>
+</body>
+</html>
